@@ -32,7 +32,7 @@ class Algorithms(spark: SparkSession) {
     val series = readings.as[Stocks]
 
     series.show()
-    
+
   }
 
 }
