@@ -23,7 +23,7 @@ class Algorithms(spark: SparkSession) {
 
     // Read-in the data schema
     val schema: StructType = new DataSchema(spark = spark)
-      .dataSchema(dataString = Paths.get("stocks", "schema.json").toString)
+      .dataSchema(schemaString = Paths.get("stocks", "schema.json").toString)
 
     // Hence, read-in the corresponding data set
     val readings: DataFrame = new DataRead(spark = spark)
