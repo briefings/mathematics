@@ -1,22 +1,24 @@
 package com.grey.data
 
-import org.apache.spark.sql.{DataFrame, Dataset, SparkSession}
+import com.grey.environment.LocalSettings
+import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.types.StructType
+
+import java.nio.file.Paths
 
 
 class DataRead(spark: SparkSession) {
 
-  def dataRead(dataString: String, schema: StructType): DataFrame = {
+  private val localSettings = new LocalSettings()
 
-    // implicits
-    import spark.implicits._
+  def dataRead(dataString: String, schema: StructType): DataFrame = {
 
     // the data
     val readings: DataFrame = spark.read.schema(schema).format("csv")
       .option("header", value = true)
       .option("dateFormat", "yyyy-MM-dd")
       .option("encoding", "UTF-8")
-      .load(dataString)
+      .load(Paths.get(localSettings.dataDirectory, dataString).toString)
 
     readings
 
