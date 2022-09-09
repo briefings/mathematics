@@ -19,13 +19,13 @@ class DataSchema(spark: SparkSession) {
 
   /**
    *
-   * @param dataString: A data file's path & file string w.r.t. this project's <data> directory
+   * @param schemaString: The path & file string of a schema w.r.t. this project's <data> directory
    */
-  def dataSchema(dataString: String): StructType = {
+  def dataSchema(schemaString: String): StructType = {
 
     // reading-in a data schema
     val fieldProperties: Try[RDD[String]] = Exception.allCatch.withTry(
-      spark.sparkContext.textFile(Paths.get(localSettings.dataDirectory, dataString).toString)
+      spark.sparkContext.textFile(Paths.get(localSettings.dataDirectory, schemaString).toString)
     )
 
     // convert the schema to a StructType
