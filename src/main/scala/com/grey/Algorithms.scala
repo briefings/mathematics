@@ -5,6 +5,7 @@ import com.grey.data.DataSchema
 import com.grey.data.DataCaseClass.Stocks
 import com.grey.data.DataRead
 import org.apache.spark.sql.types.StructType
+import org.apache.spark.storage.StorageLevel
 
 import java.nio.file.Paths
 
@@ -29,9 +30,13 @@ class Algorithms(spark: SparkSession) {
       .dataRead(dataString = Paths.get("stocks", "apple.csv").toString, schema = schema)
 
     // Convert the data frame to a spark data set; remember to import spark.implicits._
-    val series = readings.as[Stocks]
+    val stocks = readings.as[Stocks]
 
-    series.show()
+    // Persistence
+    stocks.persist(StorageLevel.MEMORY_ONLY)
+
+    println(s"\n${stocks.count()} observations\n")
+    stocks.show()
 
   }
 
