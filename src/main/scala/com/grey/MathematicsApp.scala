@@ -20,6 +20,10 @@ object MathematicsApp {
     spark.sparkContext.setLogLevel("ERROR")
 
 
+    // Proceed
+    new Algorithms(spark = spark).algorithms()
+
+
   }
 
 }
