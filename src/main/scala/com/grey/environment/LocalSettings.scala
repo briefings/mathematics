@@ -7,6 +7,6 @@ class LocalSettings {
   val separator: String = System.getProperty("file.separator")
 
   // Data directory
-  val dataDirectory = s"$projectDirectory$separator"
+  val dataDirectory = s"$projectDirectory${separator}data"
 
 }
