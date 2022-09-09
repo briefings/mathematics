@@ -31,7 +31,8 @@ class Algorithms(spark: SparkSession) {
     // Convert the data frame to a spark data set; remember to import spark.implicits._
     val series = readings.as[Stocks]
 
-
+    series.show()
+    
   }
 
 }
