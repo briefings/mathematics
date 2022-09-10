@@ -4,8 +4,16 @@ import org.apache.spark.ml.feature.VectorAssembler
 import org.apache.spark.ml.stat.Correlation
 import org.apache.spark.sql.{DataFrame, Dataset, Row}
 
+
+/**
+ *
+ */
 class DependenceMatrix() {
 
+  /**
+   *
+   * @param stocks : The trading stocks data
+   */
   def dependenceMatrix(stocks: Dataset[Row]): Unit = {
 
     // Hence
