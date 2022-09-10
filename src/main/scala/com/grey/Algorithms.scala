@@ -6,6 +6,11 @@ import org.apache.spark.storage.StorageLevel
 
 import java.nio.file.Paths
 
+
+/**
+ *
+ * @param spark : A SparkSession instance
+ */
 class Algorithms(spark: SparkSession) {
 
   private val dataInterface = new DataInterface(spark = spark)
@@ -14,10 +19,11 @@ class Algorithms(spark: SparkSession) {
 
     /**
      * Import implicits for
-     *    encoding (https://jaceklaskowski.gitbooks.io/mastering-apache-spark/spark-sql-Encoder.html)
-     *    implicit conversions, e.g., converting a RDD to a DataFrames.
-     *    access to the "$" notation.
+     * encoding (https://jaceklaskowski.gitbooks.io/mastering-apache-spark/spark-sql-Encoder.html)
+     * implicit conversions, e.g., converting a RDD to a DataFrames.
+     * access to the "$" notation.
      */
+
 
     // stock readings
     val stocks: Dataset[Row] = dataInterface.dataInterface(
@@ -29,7 +35,8 @@ class Algorithms(spark: SparkSession) {
     new com.grey.modelling.stocks.Estimates(spark = spark)
       .estimates(stocks = stocks)
 
-    // infections
+
+    // infections readings
     val infections: Dataset[Row] = dataInterface.dataInterface(
       dataString = Paths.get("infections", "viral.csv").toString,
       schemaString = Paths.get("infections", "schema.json").toString)
