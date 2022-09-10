@@ -1,9 +1,8 @@
 package com.grey
 
-import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
 import com.grey.data.DataInterface
-import org.apache.spark.ml.feature.VectorAssembler
-import org.apache.spark.ml.stat.Correlation
+import com.grey.modelling.stocks.Estimates
+import org.apache.spark.sql.{Dataset, Row, SparkSession}
 import org.apache.spark.storage.StorageLevel
 
 import java.nio.file.Paths
@@ -18,7 +17,6 @@ class Algorithms(spark: SparkSession) {
      *    implicit conversions, e.g., converting a RDD to a DataFrames.
      *    access to the "$" notation.
      */
-    import spark.implicits._
 
     // stock readings
     val stocks: Dataset[Row] = new DataInterface(spark = spark).dataInterface(
@@ -28,19 +26,7 @@ class Algorithms(spark: SparkSession) {
     // Persistence
     stocks.persist(StorageLevel.MEMORY_ONLY)
 
-    // Hence
-    val assembler: VectorAssembler = new VectorAssembler()
-      .setInputCols(Array("open", "close"))
-      .setOutputCol("trade")
-
-    // Collinearity
-    val pearson: DataFrame = Correlation.corr(assembler.transform(stocks), column = "trade", method = "pearson")
-    pearson.show()
-
-    val spearman = Correlation.corr(assembler.transform(stocks), column = "trade", method = "spearman")
-    spearman.show()
-
-    stocks.select(cols = $"open", $"close").show()
+    new Estimates(spark = spark).estimates(stocks = stocks)
 
   }
 
