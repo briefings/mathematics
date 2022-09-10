@@ -9,6 +9,8 @@ import org.apache.spark.sql.{Dataset, Row, SparkSession}
  */
 class Estimates(spark: SparkSession) {
 
+  private val independenceTest = new IndependenceTest(spark = spark)
+
   def estimates(infections: Dataset[Row]): Unit = {
 
     /**
@@ -20,6 +22,8 @@ class Estimates(spark: SparkSession) {
     import spark.implicits._
 
     infections.select($"admission_date", $"age", $"asthma").show()
+
+    independenceTest.independenceTest(infections = infections)
 
   }
 
