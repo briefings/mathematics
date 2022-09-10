@@ -1,0 +1,113 @@
+{
+  "type": "struct",
+  "fields": [
+    {
+      "name": "admission_date",
+      "type": "date",
+      "nullable": false,
+      "metadata":
+      {
+        "comment": "The patient admission date yyyy-mm-dd"
+      }
+    },
+    {
+      "name": "age",
+      "type": "string",
+      "nullable": false,
+      "metadata":
+      {
+        "comment": "Age group."
+      }
+    },
+    {
+      "name": "sex",
+      "type": "string",
+      "nullable": false,
+      "metadata":
+      {
+        "comment": "Either female, male, or unknown."
+      }
+    },
+    {
+      "name": "asthma",
+      "type": "string",
+      "nullable": false,
+      "metadata":
+      {
+        "comment": "Asthma?"
+      }
+    },
+    {
+      "name": "liver_mild",
+      "type": "string",
+      "nullable": false,
+      "metadata":
+      {
+        "comment": "Mild liver disease?"
+      }
+    },
+    {
+      "name": "renal",
+      "type": "string",
+      "nullable": false,
+      "metadata":
+      {
+        "comment": "Renal disease?"
+      }
+    },
+    {
+      "name": "pulmonary",
+      "type": "string",
+      "nullable": false,
+      "metadata":
+      {
+        "comment": "Pulmonary disease?"
+      }
+    },
+    {
+      "name": "neurological",
+      "type": "string",
+      "nullable": false,
+      "metadata":
+      {
+        "comment": "Neurological disease?"
+      }
+    },
+    {
+      "name": "liver_mod_severe",
+      "type": "string",
+      "nullable": false,
+      "metadata":
+      {
+        "comment": "Moderate to severe liver disease?"
+      }
+    },
+    {
+      "name": "malignant_neoplasm",
+      "type": "string",
+      "nullable": false,
+      "metadata":
+      {
+        "comment": "Malignant neoplasm?"
+      }
+    },
+    {
+      "name": "outcome",
+      "type": "string",
+      "nullable": false,
+      "metadata":
+      {
+        "comment": "Outcome."
+      }
+    },
+    {
+      "name": "outcome_date",
+      "type": "date",
+      "nullable": true,
+      "metadata":
+      {
+        "comment": "Outcome date."
+      }
+    }
+  ]
+}
