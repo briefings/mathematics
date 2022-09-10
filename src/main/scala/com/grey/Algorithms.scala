@@ -1,10 +1,9 @@
 package com.grey
 
-import org.apache.spark.sql.{DataFrame, SparkSession}
-import com.grey.data.DataSchema
-import com.grey.data.DataCaseClass.Stocks
-import com.grey.data.DataRead
-import org.apache.spark.sql.types.StructType
+import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
+import com.grey.data.DataInterface
+import org.apache.spark.ml.feature.VectorAssembler
+import org.apache.spark.ml.stat.Correlation
 import org.apache.spark.storage.StorageLevel
 
 import java.nio.file.Paths
@@ -21,22 +20,27 @@ class Algorithms(spark: SparkSession) {
      */
     import spark.implicits._
 
-    // Read-in the data schema
-    val schema: StructType = new DataSchema(spark = spark)
-      .dataSchema(schemaString = Paths.get("stocks", "schema.json").toString)
-
-    // Hence, read-in the corresponding data set
-    val readings: DataFrame = new DataRead(spark = spark)
-      .dataRead(dataString = Paths.get("stocks", "apple.csv").toString, schema = schema)
-
-    // Convert the data frame to a spark data set; remember to import spark.implicits._
-    val stocks = readings.as[Stocks]
+    // stock readings
+    val stocks: Dataset[Row] = new DataInterface(spark = spark).dataInterface(
+      dataString = Paths.get("stocks", "apple.csv").toString,
+      schemaString = Paths.get("stocks", "schema.json").toString)
 
     // Persistence
     stocks.persist(StorageLevel.MEMORY_ONLY)
 
-    println(s"\n${stocks.count()} observations\n")
-    stocks.show()
+    // Hence
+    val assembler: VectorAssembler = new VectorAssembler()
+      .setInputCols(Array("open", "close"))
+      .setOutputCol("trade")
+
+    // Collinearity
+    val pearson: DataFrame = Correlation.corr(assembler.transform(stocks), column = "trade", method = "pearson")
+    pearson.show()
+
+    val spearman = Correlation.corr(assembler.transform(stocks), column = "trade", method = "spearman")
+    spearman.show()
+
+    stocks.select(cols = $"open", $"close").show()
 
   }
 
