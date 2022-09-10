@@ -9,6 +9,8 @@ import java.nio.file.Paths
 
 class Algorithms(spark: SparkSession) {
 
+  private val dataInterface = new DataInterface(spark = spark)
+
   def algorithms(): Unit = {
 
     /**
@@ -19,14 +21,20 @@ class Algorithms(spark: SparkSession) {
      */
 
     // stock readings
-    val stocks: Dataset[Row] = new DataInterface(spark = spark).dataInterface(
+    val stocks: Dataset[Row] = dataInterface.dataInterface(
       dataString = Paths.get("stocks", "apple.csv").toString,
       schemaString = Paths.get("stocks", "schema.json").toString)
 
-    // Persistence
     stocks.persist(StorageLevel.MEMORY_ONLY)
 
     new Estimates(spark = spark).estimates(stocks = stocks)
+
+    // infections
+    val infections: Dataset[Row] = dataInterface.dataInterface(
+      dataString = Paths.get("infections", "viral.csv").toString,
+      schemaString = Paths.get("infections", "schema.json").toString)
+
+    infections.persist(StorageLevel.MEMORY_ONLY)
 
   }
 
