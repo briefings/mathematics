@@ -1,7 +1,6 @@
 package com.grey
 
 import com.grey.data.DataInterface
-import com.grey.modelling.stocks.Estimates
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
 import org.apache.spark.storage.StorageLevel
 
@@ -27,7 +26,8 @@ class Algorithms(spark: SparkSession) {
 
     stocks.persist(StorageLevel.MEMORY_ONLY)
 
-    new Estimates(spark = spark).estimates(stocks = stocks)
+    new com.grey.modelling.stocks.Estimates(spark = spark)
+      .estimates(stocks = stocks)
 
     // infections
     val infections: Dataset[Row] = dataInterface.dataInterface(
@@ -35,6 +35,9 @@ class Algorithms(spark: SparkSession) {
       schemaString = Paths.get("infections", "schema.json").toString)
 
     infections.persist(StorageLevel.MEMORY_ONLY)
+
+    new com.grey.modelling.infections.Estimates(spark = spark)
+      .estimates(infections = infections)
 
   }
 
