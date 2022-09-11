@@ -16,6 +16,9 @@ class Estimates(spark: SparkSession) {
   def estimates(infections: Dataset[Row]): Unit = {
 
 
+    println("\n\nInfections")
+
+
     /**
      * Import implicits for
      * encoding (https://jaceklaskowski.gitbooks.io/mastering-apache-spark/spark-sql-Encoder.html)
@@ -39,6 +42,7 @@ class Estimates(spark: SparkSession) {
 
     // Add extra features
     val extended: Dataset[Row] = new FeatureDuration(spark = spark).featureDuration(infections = infections)
+    extended.printSchema()
 
 
     // Index each factor variable
