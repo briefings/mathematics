@@ -5,6 +5,11 @@ import org.apache.spark.sql.functions.datediff
 import com.grey.data.ScalaCaseClass
 import org.apache.spark.sql.types.DoubleType
 
+
+/**
+ *
+ * @param spark: A SparkSession instance
+ */
 class FeatureDuration(spark: SparkSession) {
 
   def featureDuration(infections: Dataset[Row]): Dataset[Row] = {
