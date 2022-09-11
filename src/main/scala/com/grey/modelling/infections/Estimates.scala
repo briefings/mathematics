@@ -2,12 +2,12 @@ package com.grey.modelling.infections
 
 
 import com.grey.data.ScalaCaseClass
-import com.grey.functions.{IndexingStrings, LabellingPoints}
+import com.grey.functions.{IndexingStrings, OneHotEncoding}
 import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
 
 /**
  *
- * @param spark: A SparkSession instance
+ * @param spark : A SparkSession instance
  */
 class Estimates(spark: SparkSession) {
 
@@ -29,8 +29,8 @@ class Estimates(spark: SparkSession) {
 
     // The dependent/outcome variable
     val label: String = "outcome"
-    
-    
+
+
     // Factors
     val independentFactors: Array[String] = Array("age", "sex", "asthma", "liver_mild", "renal", "pulmonary", "neurological",
       "liver_mod_severe", "malignant_neoplasm")
@@ -51,6 +51,11 @@ class Estimates(spark: SparkSession) {
     indexed.printSchema()
 
 
+    // Encoding
+    val encoded: Dataset[Row] = new OneHotEncoding().oneHotEncoding(indexed = indexed, factors = factors)
+    encoded.printSchema()
+
+
     // Hence, the modelling variables
     val arguments: DataFrame = indexed.drop(factors: _*).drop(exclude: _*)
     val dataIndexed: Dataset[Row] = arguments.as(
@@ -60,7 +65,7 @@ class Estimates(spark: SparkSession) {
 
     // Independence
     independenceTest.independenceTest(dataIndexed = dataIndexed,
-      independentFactors = independentFactors, dependentFactor = label)
+      independentFactors = independentFactors.map(_ + "_index"), dependentFactor = s"${label}_index")
 
   }
 
