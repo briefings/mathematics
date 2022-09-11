@@ -47,6 +47,7 @@ class Estimates(spark: SparkSession) {
 
     // Hence, the modelling variables
     val arguments: DataFrame = indexed.drop(factors: _*).drop(exclude: _*)
+      .withColumnRenamed(existingName = s"${label}_index", newName = "label")
     val variables: Dataset[Row] = arguments.as(
       ScalaCaseClass.scalaCaseClass(schema = arguments.schema))
 
