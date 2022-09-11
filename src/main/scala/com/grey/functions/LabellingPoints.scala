@@ -1,13 +1,26 @@
 package com.grey.functions
 
-import org.apache.spark.ml.feature.{LabeledPoint, VectorAssembler}
+import com.grey.data.ScalaCaseClass
+import org.apache.spark.ml.feature.LabeledPoint
 import org.apache.spark.ml.linalg.Vectors
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
 
+
+/**
+ *
+ * @param spark: A SparkSession instance
+ */
 class LabellingPoints(spark: SparkSession) {
 
-  def labellingPoints(data: Dataset[Row], independent: Array[String]): Unit = {
+
+  /**
+   *
+   * @param data: A data set wherein the dependent/outcome variable is labelled/named <label>
+   * @param independent: The names of the independent variables of <data>
+   * @return
+   */
+  def labellingPoints(data: Dataset[Row], independent: Array[String]): Dataset[Row] = {
 
     /**
      * Import implicits for
@@ -17,6 +30,8 @@ class LabellingPoints(spark: SparkSession) {
      */
     import spark.implicits._
 
+
+    // Creating a labelled points RDD
     val points: RDD[LabeledPoint] = data.rdd.map(row =>
       new LabeledPoint(
         row.getAs[Double](fieldName = "label"),
@@ -24,10 +39,13 @@ class LabellingPoints(spark: SparkSession) {
       )
     )
 
+
+    // Its data frame form
     val instances: DataFrame = points.toDF()
 
-    instances.show()
 
+    // Its spark Dataset[] form
+    instances.as(ScalaCaseClass.scalaCaseClass(schema = instances.schema))
 
 
   }
