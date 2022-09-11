@@ -1,15 +1,23 @@
 package com.grey.functions
 
-import org.apache.spark.ml.feature.{OneHotEncoder, OneHotEncoderModel}
-import org.apache.spark.sql.DataFrame
-import org.apache.spark.sql.{Dataset, Row}
-
 import com.grey.data.ScalaCaseClass
+import org.apache.spark.ml.feature.{OneHotEncoder, OneHotEncoderModel}
+import org.apache.spark.sql.{DataFrame, Dataset, Row}
 
 import scala.language.postfixOps
 
+
+/**
+ *
+ */
 class OneHotEncoding() {
 
+  /**
+   *
+   * @param indexed: A data set wherein the factor variables have been indexed
+   * @param factors: The names of the factor variables, excluding their suffix <_index>.
+   * @return
+   */
   def oneHotEncoding(indexed: Dataset[Row], factors: Array[String]): Dataset[Row] = {
 
     /**
@@ -38,7 +46,7 @@ class OneHotEncoding() {
 
 
     // ... hence, the data transformation
-    val encoded: DataFrame =  encoderModel.transform(indexed)
+    val encoded: DataFrame = encoderModel.transform(indexed)
 
 
     // Export the spark Dataset[] form
