@@ -20,7 +20,7 @@ class LabellingPoints(spark: SparkSession) {
    * @param independent: The names of the independent variables of <data>
    * @return
    */
-  def labellingPoints(data: Dataset[Row], independent: Array[String]): Dataset[Row] = {
+  def labellingPoints(data: Dataset[Row], independent: Array[String], dependent: String): Dataset[Row] = {
 
     /**
      * Import implicits for
@@ -34,8 +34,8 @@ class LabellingPoints(spark: SparkSession) {
     // Creating a labelled points RDD
     val points: RDD[LabeledPoint] = data.rdd.map(row =>
       new LabeledPoint(
-        row.getAs[Double](fieldName = "label"),
-        Vectors.dense(independent.map(h => row.getAs[Double](fieldName = h)))
+        row.getAs[Double](fieldName = dependent),
+        Vectors.dense(independent.map(field_ => row.getAs[Double](fieldName = field_)))
       )
     )
 
