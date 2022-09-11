@@ -1,6 +1,7 @@
 package com.grey.modelling.infections
 
 import org.apache.spark.ml.stat.ChiSquareTest
+import org.apache.spark.sql.types.IntegerType
 import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
 
 class IndependenceTest(spark: SparkSession) {
@@ -16,7 +17,13 @@ class IndependenceTest(spark: SparkSession) {
 
     val chi: DataFrame = ChiSquareTest.test(data, featuresCol = "features", labelCol = "label")
 
-    chi.show()
+    chi.printSchema()
+
+    println("probabilities: " + chi.head.getAs[Vector[Double]](fieldName = "pValues"))
+    println("degrees of freedom: " +  chi.head.getAs[Vector[IntegerType]](fieldName = "degreesOfFreedom"))
+    println("statistics: " + chi.head.getAs[Vector[Double]](fieldName = "statistics"))
+
+
 
 
   }
