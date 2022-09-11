@@ -2,8 +2,8 @@ package com.grey.modelling.infections
 
 import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
 import org.apache.spark.sql.functions.datediff
-
 import com.grey.data.ScalaCaseClass
+import org.apache.spark.sql.types.DoubleType
 
 class FeatureDuration(spark: SparkSession) {
 
@@ -20,7 +20,8 @@ class FeatureDuration(spark: SparkSession) {
 
     // Feature: Length of stay
     var extended: DataFrame = infections
-      .withColumn(colName = "duration_days", col = datediff(end = $"outcome_date", start = $"admission_date"))
+      .withColumn(colName = "duration_days",
+        col = datediff(end = $"outcome_date", start = $"admission_date").cast(DoubleType))
     println(extended.count())
 
 
