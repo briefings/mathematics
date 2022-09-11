@@ -16,7 +16,7 @@ class IndexingStrings {
    * @param factors: The list of factor variables whose field elements will be indexed.
    * @return
    */
-  def indexingStrings(data: Dataset[Row], factors: List[String]): Dataset[Row] = {
+  def indexingStrings(data: Dataset[Row], factors: Array[String]): Dataset[Row] = {
 
     // Option I: Sequentially index each factor variable
     var indexer: StringIndexerModel = new StringIndexer().setInputCol(factors.head).setOutputCol(s"${factors.head}_index").fit(data)
