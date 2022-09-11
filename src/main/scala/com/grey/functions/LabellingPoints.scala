@@ -33,7 +33,7 @@ class LabellingPoints(spark: SparkSession) {
 
     // Creating a labelled points RDD
     val points: RDD[LabeledPoint] = data.rdd.map(row =>
-      new LabeledPoint(
+      LabeledPoint(
         row.getAs[Double](fieldName = dependent),
         Vectors.dense(independent.map(field_ => row.getAs[Double](fieldName = field_)))
       )
