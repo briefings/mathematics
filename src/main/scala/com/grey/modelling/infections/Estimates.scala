@@ -56,6 +56,7 @@ class Estimates(spark: SparkSession) {
     // Index each factor variable
     val indexed: Dataset[Row] = new IndexingStrings().indexingStrings(data = extended, factors = factors)
     indexed.printSchema()
+    indexed.show(numRows = 5)
 
 
     // Encoding
