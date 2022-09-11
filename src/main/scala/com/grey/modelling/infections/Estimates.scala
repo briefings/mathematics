@@ -47,23 +47,26 @@ class Estimates(spark: SparkSession) {
 
     // Index each factor variable
     val indexed: Dataset[Row] = new IndexingStrings().indexingStrings(data = extended, factors = factors)
+    indexed.printSchema()
 
 
-    // Hence, the modelling variables
+    // Hence, the modelling variables; note that the indexed dependent variable is named <label>.
     val arguments: DataFrame = indexed.drop(factors: _*).drop(exclude: _*)
       .withColumnRenamed(existingName = s"${label}_index", newName = "label")
-    val variables: Dataset[Row] = arguments.as(
+    val variablesIndexed: Dataset[Row] = arguments.as(
       ScalaCaseClass.scalaCaseClass(schema = arguments.schema))
 
 
     // The names of the independent variables
-    val independent: Array[String] = variables.columns.filterNot(_ == s"${label}_index")
-    independent.foreach(println(_))
+    val independent: Array[String] = variablesIndexed.columns.filterNot(_ == s"${label}_index")
 
 
-    new LabellingPoints(spark = spark).labellingPoints(data = variables, independent = independent)
+   // Hence
+   val variablesLabelled: Dataset[Row] =  new LabellingPoints(spark = spark)
+     .labellingPoints(data = variablesIndexed, independent = independent)
 
-    // independenceTest.independenceTest(infections = infections)
+
+    independenceTest.independenceTest(data = variablesLabelled)
 
   }
 
