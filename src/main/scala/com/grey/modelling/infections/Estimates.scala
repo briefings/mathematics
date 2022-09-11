@@ -1,7 +1,8 @@
 package com.grey.modelling.infections
 
-import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
+import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
+import com.grey.functions.IndexingStrings
 
 /**
  *
@@ -13,6 +14,7 @@ class Estimates(spark: SparkSession) {
 
   def estimates(infections: Dataset[Row]): Unit = {
 
+
     /**
      * Import implicits for
      * encoding (https://jaceklaskowski.gitbooks.io/mastering-apache-spark/spark-sql-Encoder.html)
@@ -21,9 +23,41 @@ class Estimates(spark: SparkSession) {
      */
     import spark.implicits._
 
-    infections.select($"admission_date", $"age", $"asthma").show()
 
-    independenceTest.independenceTest(infections = infections)
+    // The outcome
+    val label: String = "outcome"
+
+
+    // Factor variables
+    val factors = List("age", "sex", "asthma", "liver_mild", "renal", "pulmonary", "neurological",
+      "liver_mod_severe", "malignant_neoplasm", label)
+
+
+    // Extraneous variables
+    val exclude = List("outcome_date", "admission_date")
+
+
+    // Add extra features
+    val extended: Dataset[Row] = new FeatureDuration(spark = spark).featureDuration(infections = infections)
+
+
+    // Index each factor variable
+    val indexed: Dataset[Row] = new IndexingStrings().indexingStrings(data = extended, factors = factors)
+
+
+    // Hence, the modelling variables
+    val variables: DataFrame = indexed.drop(factors:_*).drop(exclude:_*)
+      .withColumnRenamed(existingName = s"${label}_index", newName = "label")
+    variables.show()
+    variables.printSchema()
+
+
+    // The names of the independent variables
+    val independent: Array[String] = variables.columns.filterNot(_ == "label")
+    independent.foreach(println(_))
+
+
+    // independenceTest.independenceTest(infections = infections)
 
   }
 
