@@ -18,13 +18,11 @@ class IndexingStrings {
    */
   def indexingStrings(data: Dataset[Row], factors: Array[String]): Dataset[Row] = {
 
-    // Option I: Sequentially index each factor variable
-    var indexer: StringIndexerModel = new StringIndexer().setInputCol(factors.head).setOutputCol(s"${factors.head}_index").fit(data)
-    var indexed: DataFrame = indexer.transform(data)
-    for (i <- 1 until factors.length) {
-      indexer = new StringIndexer().setInputCol(factors(i)).setOutputCol(s"${factors(i)}_index").fit(indexed)
-      indexed = indexer.transform(indexed)
-    }
+    val indexer: StringIndexer = new StringIndexer().setInputCols(factors).setOutputCols(factors.map(_ + "_index"))
+    val indexerModel: StringIndexerModel = indexer.fit(data)
+    val indexed: DataFrame = indexerModel.transform(data)
+
+    
 
     // Export the Dataset[] form of the enhanced data
     val frame = ScalaCaseClass.scalaCaseClass(schema = indexed.schema)
