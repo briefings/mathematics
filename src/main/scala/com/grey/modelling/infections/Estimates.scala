@@ -1,9 +1,9 @@
 package com.grey.modelling.infections
 
-
 import com.grey.data.ScalaCaseClass
 import com.grey.functions.{IndexingStrings, OneHotEncoding}
 import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
+
 
 /**
  *
@@ -13,6 +13,10 @@ class Estimates(spark: SparkSession) {
 
   private val independenceTest = new IndependenceTest(spark = spark)
 
+  /**
+   *
+   * @param infections : The viral infections data set
+   */
   def estimates(infections: Dataset[Row]): Unit = {
 
 
@@ -24,6 +28,9 @@ class Estimates(spark: SparkSession) {
      * encoding (https://jaceklaskowski.gitbooks.io/mastering-apache-spark/spark-sql-Encoder.html)
      * implicit conversions, e.g., converting a RDD to a DataFrames.
      * access to the "$" notation.
+     *
+     * import spark.implicits._
+     *
      */
 
 
