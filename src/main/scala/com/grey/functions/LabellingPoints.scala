@@ -16,8 +16,9 @@ class LabellingPoints(spark: SparkSession) {
 
   /**
    *
-   * @param data: A data set wherein the dependent/outcome variable is labelled/named <label>
+   * @param data: A data set
    * @param independent: The names of the independent variables of <data>
+   * @param dependent: The name of the dependent variable of <data>
    * @return
    */
   def labellingPoints(data: Dataset[Row], independent: Array[String], dependent: String): Dataset[Row] = {
