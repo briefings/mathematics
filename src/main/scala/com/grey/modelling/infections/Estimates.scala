@@ -1,8 +1,9 @@
 package com.grey.modelling.infections
 
 
+import com.grey.data.ScalaCaseClass
+import com.grey.functions.{IndexingStrings, LabellingPoints}
 import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
-import com.grey.functions.IndexingStrings
 
 /**
  *
@@ -21,7 +22,6 @@ class Estimates(spark: SparkSession) {
      * implicit conversions, e.g., converting a RDD to a DataFrames.
      * access to the "$" notation.
      */
-    import spark.implicits._
 
 
     // The outcome
@@ -46,16 +46,17 @@ class Estimates(spark: SparkSession) {
 
 
     // Hence, the modelling variables
-    val variables: DataFrame = indexed.drop(factors:_*).drop(exclude:_*)
-      .withColumnRenamed(existingName = s"${label}_index", newName = "label")
-    variables.show()
-    variables.printSchema()
+    val arguments: DataFrame = indexed.drop(factors: _*).drop(exclude: _*)
+    val variables: Dataset[Row] = arguments.as(
+      ScalaCaseClass.scalaCaseClass(schema = arguments.schema))
 
 
     // The names of the independent variables
-    val independent: Array[String] = variables.columns.filterNot(_ == "label")
+    val independent: Array[String] = variables.columns.filterNot(_ == s"${label}_index")
     independent.foreach(println(_))
 
+
+    new LabellingPoints(spark = spark).labellingPoints(data = variables, independent = independent)
 
     // independenceTest.independenceTest(infections = infections)
 
