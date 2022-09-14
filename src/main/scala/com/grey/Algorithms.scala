@@ -3,7 +3,7 @@ package com.grey
 import com.grey.data.DataInterface
 import org.apache.spark.sql.expressions.UserDefinedFunction
 import org.apache.spark.sql.functions.udf
-import org.apache.spark.sql.{Dataset, Row, SparkSession}
+import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
 import org.apache.spark.storage.StorageLevel
 
 import java.nio.file.Paths
@@ -54,6 +54,14 @@ class Algorithms(spark: SparkSession) {
 
     new com.grey.modelling.infections.Estimates(spark = spark)
       .estimates(infections = infections)
+
+
+    // A test
+    val training: DataFrame = spark
+      .read
+      .format("libsvm")
+      .load("data/sample/sample_multiclass_classification_data.txt")
+    training.show()
 
   }
 
