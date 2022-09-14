@@ -1,8 +1,7 @@
 package com.grey.modelling.infections
 
-import com.grey.data.ScalaCaseClass
 import com.grey.functions.{IndexingStrings, OneHotEncoding}
-import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
+import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
 
 /**
@@ -12,6 +11,7 @@ import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
 class Estimates(spark: SparkSession) {
 
   private val independenceTest = new IndependenceTest(spark = spark)
+  private val binomialLR = new BinomialLR(spark = spark)
 
   /**
    *
@@ -35,7 +35,7 @@ class Estimates(spark: SparkSession) {
 
 
     // The dependent/outcome variable
-    val label: String = "outcome"
+    val label: String = "alive"
 
 
     // Factors
@@ -46,6 +46,7 @@ class Estimates(spark: SparkSession) {
 
     // Extraneous variables
     val exclude: Array[String] = Array("outcome_date", "admission_date")
+    exclude.foreach(println(_))
 
 
     // Add extra features
@@ -62,18 +63,17 @@ class Estimates(spark: SparkSession) {
     // Encoding
     val encoded: Dataset[Row] = new OneHotEncoding().oneHotEncoding(indexed = indexed, factors = factors)
     encoded.printSchema()
-
-
-    // Hence, the modelling variables
-    val arguments: DataFrame = indexed.drop(factors: _*).drop(exclude: _*)
-    val dataIndexed: Dataset[Row] = arguments.as(
-      ScalaCaseClass.scalaCaseClass(schema = arguments.schema))
-    dataIndexed.printSchema()
+    encoded.selectExpr(factors.map(_ + "_enc"):_*).show(numRows = 5)
 
 
     // Independence
-    independenceTest.independenceTest(dataIndexed = dataIndexed,
+    independenceTest.independenceTest(dataIndexed = indexed,
       independentFactors = independentFactors.map(_ + "_index"), dependentFactor = s"${label}_index")
+
+    // Regression
+    binomialLR.binomialLR(dataEncoded = encoded,
+      independentFactors = independentFactors.map(_ + "_index"), dependentFactor = s"${label}_index")
+
 
   }
 
