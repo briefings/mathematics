@@ -48,10 +48,8 @@ class OneHotEncoding() {
     // ... hence, the data transformation
     val encoded: DataFrame = encoderModel.transform(indexed)
 
-
     // Export the spark Dataset[] form
     encoded.as(ScalaCaseClass.scalaCaseClass(schema = encoded.schema))
-
 
   }
 
