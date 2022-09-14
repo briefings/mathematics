@@ -1,6 +1,8 @@
 package com.grey
 
 import com.grey.data.DataInterface
+import org.apache.spark.sql.expressions.UserDefinedFunction
+import org.apache.spark.sql.functions.udf
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
 import org.apache.spark.storage.StorageLevel
 
@@ -15,6 +17,10 @@ class Algorithms(spark: SparkSession) {
 
   private val dataInterface = new DataInterface(spark = spark)
 
+  private val alive: UserDefinedFunction = udf((x: String) => {
+    if (x == "death") "false" else "true"
+  })
+
   def algorithms(): Unit = {
 
     /**
@@ -23,6 +29,7 @@ class Algorithms(spark: SparkSession) {
      * implicit conversions, e.g., converting a RDD to a DataFrames.
      * access to the "$" notation.
      */
+    import spark.implicits._
 
 
     // stock readings
@@ -37,11 +44,13 @@ class Algorithms(spark: SparkSession) {
 
 
     // infections readings
-    val infections: Dataset[Row] = dataInterface.dataInterface(
+    var infections: Dataset[Row] = dataInterface.dataInterface(
       dataString = Paths.get("infections", "viral.csv").toString,
       schemaString = Paths.get("infections", "schema.json").toString)
+    infections = infections.withColumn("alive", alive($"outcome"))
 
     infections.persist(StorageLevel.MEMORY_ONLY)
+    infections.show()
 
     new com.grey.modelling.infections.Estimates(spark = spark)
       .estimates(infections = infections)
