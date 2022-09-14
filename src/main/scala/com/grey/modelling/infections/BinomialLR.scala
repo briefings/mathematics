@@ -1,23 +1,24 @@
 package com.grey.modelling.infections
 
-import com.grey.functions.LabellingPoints
-import org.apache.spark.sql.{Dataset, Row, SparkSession}
+import org.apache.spark.ml.feature.VectorAssembler
+import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
 
 class BinomialLR(spark: SparkSession) {
 
-  def binomialLR(dataEncoded: Dataset[Row], independentFactors: Array[String], dependentFactor: String): Unit = {
+  def binomialLR(dataEncoded: Dataset[Row], independentFactors: Array[String]): Unit = {
 
-    // Prior to determining the degree of dependence between each <independent factor variable>
-    // and the <dependent factor variable>, the data must be converted to a labelled point
-    // structure.
-    val dataLabelled: Dataset[Row] =  new LabellingPoints(spark = spark)
-      .labellingPoints(data = dataEncoded, independent = independentFactors, dependent = dependentFactor)
-
-    val Array(training, testing) = dataLabelled.randomSplit(Array(0.8, 0.2), seed = 5)
-
+    val Array(training, testing) = dataEncoded.randomSplit(Array(0.8, 0.2), seed = 5)
     training.show(5)
     testing.show(5)
 
+    val vectorAssembler: VectorAssembler = new VectorAssembler()
+      .setInputCols(independentFactors)
+      .setOutputCol("label")
+
+    val trainingData: DataFrame = vectorAssembler.transform(training)
+    val testingData: DataFrame = vectorAssembler.transform(testing)
+    trainingData.show()
+    testingData.show()
 
   }
 
