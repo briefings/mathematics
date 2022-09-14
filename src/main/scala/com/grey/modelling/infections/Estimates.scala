@@ -54,25 +54,27 @@ class Estimates(spark: SparkSession) {
     extended.printSchema()
 
 
-    // Index each factor variable
+    // Indexing; each factor variable
     val indexed: Dataset[Row] = new IndexingStrings().indexingStrings(data = extended, factors = factors)
     indexed.printSchema()
     indexed.selectExpr(factors.map(_ + "_index"):_*).show(numRows = 5)
 
 
-    // Encoding
+    // Encoding; indexed variables
     val encoded: Dataset[Row] = new OneHotEncoding().oneHotEncoding(indexed = indexed, factors = factors)
     encoded.printSchema()
     encoded.selectExpr(factors.map(_ + "_enc"):_*).show(numRows = 5)
 
 
     // Independence
-    independenceTest.independenceTest(dataIndexed = indexed,
+    independenceTest.independenceTest(dataIndexed = indexed.selectExpr(factors.map(_ + "_index"):_*),
       independentFactors = independentFactors.map(_ + "_index"), dependentFactor = s"${label}_index")
 
+
     // Regression
-    binomialLR.binomialLR(dataEncoded = encoded,
-      independentFactors = independentFactors.map(_ + "_index"), dependentFactor = s"${label}_index")
+    val variables: Array[String] = Array(s"${label}_index") ++ independentFactors.map(_ + "_enc")
+    binomialLR.binomialLR(dataEncoded = encoded.selectExpr(variables:_*),
+      independentFactors = independentFactors.map(_ + "_enc"))
 
 
   }
