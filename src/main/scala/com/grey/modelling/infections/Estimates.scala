@@ -71,12 +71,6 @@ class Estimates(spark: SparkSession) {
       independentFactors = independentFactors.map(_ + "_index"), dependentFactor = s"${label}_index")
 
 
-    // Regression
-    val variables: Array[String] = Array(s"${label}_index") ++ independentFactors.map(_ + "_enc")
-    binomialLR.binomialLR(dataEncoded = encoded.selectExpr(variables:_*),
-      independentFactors = independentFactors.map(_ + "_enc"))
-
-
   }
 
 }
