@@ -11,7 +11,6 @@ import org.apache.spark.sql.{Dataset, Row, SparkSession}
 class Estimates(spark: SparkSession) {
 
   private val independenceTest = new IndependenceTest(spark = spark)
-  private val binomialLR = new BinomialLR(spark = spark)
 
   /**
    *
