@@ -20,6 +20,7 @@ class DependenceMatrix() {
     val assembler: VectorAssembler = new VectorAssembler()
       .setInputCols(Array("open", "close", "high", "low"))
       .setOutputCol("trade")
+    assembler.transform(stocks).show()
 
     // Collinearity
     val pearson: DataFrame = Correlation.corr(assembler.transform(stocks), column = "trade", method = "pearson")
